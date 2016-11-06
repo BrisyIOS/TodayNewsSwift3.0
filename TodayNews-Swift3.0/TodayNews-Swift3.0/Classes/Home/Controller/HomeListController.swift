@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import MJRefresh
 
 class HomeListController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -28,49 +29,144 @@ class HomeListController: UIViewController, UITableViewDataSource, UITableViewDe
     
     // 懒加载数组
     private lazy var homeListArray: [HomeListModel] = [HomeListModel]();
+    
+    override func loadView() {
+        super.loadView();
+        
+        print("loadview");
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        definesPresentationContext = true;
         // 添加tableview 
         view.addSubview(tableView);
         tableView.estimatedRowHeight = 100;
+        tableView.tableFooterView = UIView();
     
         // 注册cell
         tableView.register(HomeOneImageCell.self, forCellReuseIdentifier: homeOneImageCellID);
         tableView.register(HomeThreeImageCell.self, forCellReuseIdentifier: homeThreeImageCellID);
         tableView.register(HomeLargeImageCell.self, forCellReuseIdentifier: homeLargeImageCellID);
         tableView.register(HomeNoImageCell.self, forCellReuseIdentifier: homeNoImageCellID);
-
-        // 从服务器请求首页新闻列表数据
-        let urlString = "http://lf.snssdk.com/api/news/feed/v39";
-        let parameters: [String: Any] = ["iid": iid, "device_id": device_id, "category": homeTopModel?.category ?? ""];
-        getHomeListFromServer(urlString: urlString, parameters: parameters);
- 
+        
+        // 下拉刷新
+        var pullTime: TimeInterval = 0;
+        let header = MJRefreshNormalHeader();
+        header.refreshingBlock = { [weak self] _ in
+            guard let weakSelf = self else {
+                return;
+            }
+            pullTime = Date().timeIntervalSince1970;
+            
+            // 从服务器请求首页新闻列表数据
+            let urlString = "http://lf.snssdk.com/api/news/feed/v39";
+            let parameters: [String: Any] = ["iid": iid, "device_id": device_id, "category": weakSelf.homeTopModel?.category ?? ""];
+            weakSelf.getHomeListFromServer(urlString: urlString, parameters: parameters);
+        }
+        // 设置header
+        tableView.mj_header = header;
+        // 开始刷新
+        header.beginRefreshing();
+        
+        // 上啦加载更多
+        let footer = MJRefreshAutoNormalFooter();
+        footer.refreshingBlock = { [weak self]
+            _ in
+            guard let weakSelf = self else {
+                return;
+            }
+            // 加载更多
+            let url = "http://lf.snssdk.com/api/news/feed/v39/";
+            let parameters: [String: Any] = ["device_id": device_id, "iid": iid, "last_refresh_sub_entrance_interval": pullTime];
+            HttpManager.shareInstance.request(.GET, urlString: url, parameters: parameters, finished: { (result, error) in
+                // 如果error 不为空，打印error，并直接返回
+                if let error = error {
+                    print(error);
+                    return;
+                }
+                // 如果没有数据，直接返回
+                guard let result = result else {
+                    return;
+                }
+                // 如果有数据，对返回的数据做JSON解析
+                let resultDic = result as? [String: Any];
+                if let resultDic = resultDic {
+                    let dataArray = resultDic["data"] as? [[String: Any]];
+                    for dataDic in dataArray ?? [] {
+                        let content = dataDic["content"] as? String ?? "";
+                        let contentData = content.data(using: String.Encoding.utf8);
+                        do {
+                            let contentDic = try JSONSerialization.jsonObject(with: contentData!, options: .mutableContainers) as? [String: Any]  ?? [:];
+                            // 将字典转化为模型
+                            let model = HomeListModel.modelWidthDic(dic: contentDic);
+                            if model.template_md5 != "" {
+                                continue;
+                            }
+                            // 将模型装入数组中
+                            weakSelf.homeListArray.append(model);
+                        } catch {
+                            // 异常处理
+                            print("JSON解析异常");
+                        }
+                    }
+                    
+                    // 刷新数据
+                    weakSelf.tableView.reloadData();
+                    // 停止刷新
+                    weakSelf.tableView.mj_header.endRefreshing();
+                }
+            })
+        }
+        // 设置footer
+        tableView.mj_footer = footer;
+        
     }
     
     // MARK: - 从服务器请求首页新闻列表数据
     func getHomeListFromServer(urlString: String, parameters: [String: Any]) -> Void {
-        
+      
         HttpManager.shareInstance.request(.GET, urlString: urlString, parameters: parameters) { [weak self] (result, error) in
             
+            // 如果error不为空，直接返回
+            if let error = error {
+                print(error);
+                return;
+            }
+            // 释放self捕获的引用，并做安全处理
             guard let weakSelf = self else {
                 return;
             }
+            // 如果没有数据，直接返回
+            guard let result = result else {
+                return;
+            }
+            // 有数据， 对数据进行JSON解析
             let resultDic = result as? [String: Any];
             if let resultDic = resultDic {
                 let dataArray = resultDic["data"] as? [[String: Any]];
                 for dataDic in dataArray ?? [] {
                     let content = dataDic["content"] as? String ?? "";
                     let contentData = content.data(using: String.Encoding.utf8);
-                    let contentDic = try! JSONSerialization.jsonObject(with: contentData!, options: .mutableContainers) as![String: Any];
-                    let model = HomeListModel.modelWidthDic(dic: contentDic);
-                    weakSelf.homeListArray.append(model);
-                   
+                    do {
+                        let contentDic = try JSONSerialization.jsonObject(with: contentData!, options: .mutableContainers) as? [String: Any]  ?? [:];
+                        // 将字典转化为模型
+                        let model = HomeListModel.modelWidthDic(dic: contentDic);
+                        if model.template_md5 != "" {
+                            continue;
+                        }
+                        // 将模型装入数组中
+                        weakSelf.homeListArray.append(model);
+                    } catch {
+                        // 异常处理
+                        print("JSON解析异常");
+                    }
                 }
                 
                 // 刷新数据
                 weakSelf.tableView.reloadData();
+                // 停止刷新
+                weakSelf.tableView.mj_header.endRefreshing();
             }
         }
     }
@@ -124,6 +220,16 @@ class HomeListController: UIViewController, UITableViewDataSource, UITableViewDe
         }
     }
     
+    // MARK: - 选中cell进入详情页面
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: false);
+        
+        let homeDetailVc = HomeDetailController();
+        let homeListModel = homeListArray[indexPath.row];
+        homeDetailVc.homeListModel = homeListModel;
+        navigationController?.pushViewController(homeDetailVc, animated: true);
+    }
+    
     // MARK: - 设置子控件的frame
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews();
@@ -143,5 +249,4 @@ class HomeListController: UIViewController, UITableViewDataSource, UITableViewDe
         super.didReceiveMemoryWarning()
         
     }
- 
 }

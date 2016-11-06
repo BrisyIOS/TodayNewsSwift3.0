@@ -56,6 +56,7 @@ class HomeListModel: NSObject {
     var article_type: Int?
     var cursor: Int?
     var media_info: MediaInfoModel?
+    var template_md5: String?;
     
     // MARK: - 字典转模型
     class func modelWidthDic(dic: [String: Any]) -> HomeListModel {
@@ -87,7 +88,7 @@ class HomeListModel: NSObject {
         model.has_m3u8_video = dic["has_m3u8_video"] as? Bool;
         model.has_mp4_video = dic["has_mp4_video"] as? Bool;
         model.has_video = dic["has_video"] as? Bool;
-        model.video_detail_info = dic["video_detail_info"] as? VideoDetailInfoModel;
+        model.video_detail_info = VideoDetailInfoModel.modelWithDic(dic: dic["video_detail_info"] as? [String : Any]);
         model.video_style = dic["video_style"] as? Int ?? 0;
         model.video_duration = dic["video_duration"] as? Int ?? 0;
         model.video_id = dic["video_id"] as? Int ?? 0;
@@ -101,6 +102,7 @@ class HomeListModel: NSObject {
         model.article_type = dic["article_type"] as? Int ?? 0;
         model.cursor = dic["cursor"] as? Int ?? 0;
         model.media_info = MediaInfoModel.modelWithDic(dic: dic["media_info"] as? [String : Any]);
+        model.template_md5 = dic["template_md5"] as? String ?? "";
         return model;
     }
     

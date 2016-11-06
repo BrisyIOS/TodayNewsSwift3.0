@@ -70,6 +70,9 @@ class HomeOneImageCell: HomeListCommonCell {
         
         // 添加图片
         contentView.addSubview(rightIamge);
+        
+        // 设置标题为2行
+        titleLabel.numberOfLines = 0;
     }
     
     // MARK: - 设置子控件的frame

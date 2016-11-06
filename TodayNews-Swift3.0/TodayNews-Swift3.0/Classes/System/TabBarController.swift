@@ -36,7 +36,7 @@ class TabBarController: UITabBarController {
     
     // MARK: - 添加子控制器
     func addChildVc(vc: UIViewController, title: String, imageName: String, selectedImageName: String) -> Void {
-        
+
         let nav = NavigationController(rootViewController: vc);
         nav.tabBarItem.title = title;
         nav.tabBarItem.image = UIImage.imageWithName(name: imageName);

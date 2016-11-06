@@ -15,6 +15,7 @@ class HomeLargeImageCell: HomeListCommonCell {
         let label = UILabel();
         label.textAlignment = .center;
         label.layer.cornerRadius = 10;
+        label.textColor = UIColor.white;
         label.layer.masksToBounds = true;
         label.font = Font(size: 9);
         label.backgroundColor = RGB(red: 0, green: 0, blue: 0);
@@ -193,8 +194,8 @@ class HomeLargeImageCell: HomeListCommonCell {
         video_durationLabel.frame = CGRect(x: video_durationLabelX, y: video_durationLabelY, width: video_durationLabelW, height: video_durationLabelH);
         
         // 设置playBtn 的frame
-        playBtn.center = largeImage.center;
-        playBtn.bounds = CGRect(x: 0, y: 0, width: realValue(40), height: realValue(40));
+        playBtn.center = CGPoint(x: largeImageW/2, y: largeImageH/2);
+        playBtn.bounds = CGRect(x: 0, y: 0, width: realValue(120/2), height: realValue(120/2));
         
         // 设置圆角
         let cornerRadii = CGSize(width: realValue(49/3/2), height: realValue(49/3/2));

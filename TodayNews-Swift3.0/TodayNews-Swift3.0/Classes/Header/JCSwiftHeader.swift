@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 import SDWebImage
+import MJRefresh
 
 // 信息
 let iid = "5034850950";
@@ -51,6 +52,48 @@ extension UIImageView {
     }
 }
 
+// 创建时间格式、日期，比较耗性能，需要保证整个项目中只执行一次
+let formatter = DateFormatter();
+let calendar = Calendar.current;
+extension Date {
+    
+    var dateDescription: String {
+        
+        // 今天
+        if calendar.isDateInToday(self) {
+            
+            let delta = -Int(self.timeIntervalSinceNow);
+            if delta < 60 {
+                return "刚刚";
+            }
+            
+            if delta < 3600 {
+                return "\(delta/60)分钟前"
+            }
+            
+            return "\(delta/3600)小时前"
+     
+        }
+        // 昨天
+        var fmt = " HH:mm"
+        if calendar.isDateInYesterday(self) {
+            fmt = "昨天" + fmt;
+        } else {
+            fmt = "MM-dd" + fmt;
+            let year = calendar.component(.year, from: self);
+            let currentYear = calendar.component(.year, from: Date());
+            if year != currentYear {
+                fmt = "yyyy-" + fmt;
+            }
+        }
+        // 时间格式
+        formatter.dateFormat = fmt;
+        
+        return formatter.string(from: self);
+    }
+}
+
+
 // 根据指定宽度和字体大小，计算label高度
 func calculateLabelHeight(text: String, labelW: CGFloat, fontSize: CGFloat) -> CGFloat {
     
@@ -64,10 +107,7 @@ func calculateLabelHeight(text: String, labelW: CGFloat, fontSize: CGFloat) -> C
 func changeTimestampToPublicTime(timestamp: Int) -> String {
     let newTimestamp = TimeInterval(timestamp);
     let date = Date(timeIntervalSince1970: newTimestamp);
-    let formatter = DateFormatter();
-    formatter.dateFormat = "YYYY-MM-dd HH:mm:ss";
-    let dateString = formatter.string(from: date);
-    return dateString;
+    return date.dateDescription;
 };
 
 

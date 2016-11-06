@@ -5,4 +5,5 @@ use_frameworks!
 target ’TodayNews-Swift3.0’ do
     pod 'AFNetworking', '~> 3.1.0'
     pod 'SDWebImage', '~> 3.7.5’
+    pod 'MJRefresh', '~> 3.1.12'
 end

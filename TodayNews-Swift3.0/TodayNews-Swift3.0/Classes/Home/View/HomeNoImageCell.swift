@@ -42,7 +42,7 @@ class HomeNoImageCell: HomeListCommonCell {
                 nameLabel.text = mediaInfo.name;
                 avatarImageView.zx_setImageWithURL(mediaInfo.avatar_url);
             }
-            
+ 
             // 评论
             if let comment = homeListModel.comment_count {
                 commentLabel.text = (comment >= 10000) ? "\(comment/10000)万评论" : "\(comment)评论";

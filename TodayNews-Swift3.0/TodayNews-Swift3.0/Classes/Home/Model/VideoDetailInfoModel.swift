@@ -22,7 +22,11 @@ class VideoDetailInfoModel: NSObject {
 
     
     // MARK: - 字典转模型
-    class func modelWithDic(dic: [String: Any]) -> VideoDetailInfoModel? {
+    class func modelWithDic(dic: [String: Any]?) -> VideoDetailInfoModel? {
+        
+        guard let dic = dic else {
+            return nil;
+        }
         
         let model = VideoDetailInfoModel();
         model.video_watching_count = dic["video_watching_count"] as? Int ?? 0;
@@ -33,7 +37,7 @@ class VideoDetailInfoModel: NSObject {
         model.direct_play = dic["direct_play"] as? Int ?? 0;
         model.group_flags = dic["group_flags"] as? Int ?? 0;
         model.show_pgc_subscribe = dic["show_pgc_subscribe"] as? Int ?? 0;
-        model.detail_video_large_image = dic["detail_video_large_image"] as? DetailVideoLargeImageModel;
+        model.detail_video_large_image = DetailVideoLargeImageModel.modelWithDic(dic: dic["detail_video_large_image"] as? [String: Any]);
         return model;
         
     }

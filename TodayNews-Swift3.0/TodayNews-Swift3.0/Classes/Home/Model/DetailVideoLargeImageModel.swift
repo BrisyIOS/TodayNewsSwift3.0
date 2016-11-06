@@ -18,7 +18,11 @@ class DetailVideoLargeImageModel: NSObject {
     var url_list = [[String: Any]]()
     
     // MARK: - 字典转模型
-    func modelWithDic(dic: [String: Any]) -> DetailVideoLargeImageModel {
+    class func modelWithDic(dic: [String: Any]?) -> DetailVideoLargeImageModel? {
+        
+        guard let dic = dic else {
+            return nil;
+        }
         
         let model = DetailVideoLargeImageModel();
         model.height = dic["height"] as? Int ?? 0;

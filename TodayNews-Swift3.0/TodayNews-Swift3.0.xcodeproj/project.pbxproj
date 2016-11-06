@@ -33,6 +33,7 @@
 		8B6544121DC1BD2000813C30 /* VideoDetailInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6544111DC1BD2000813C30 /* VideoDetailInfoModel.swift */; };
 		8B6544151DC1BD9300813C30 /* DetailVideoLargeImageModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B6544141DC1BD9300813C30 /* DetailVideoLargeImageModel.swift */; };
 		8B87EABB1DC1D95400E96BB7 /* HomeListCommonCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B87EABA1DC1D95400E96BB7 /* HomeListCommonCell.swift */; };
+		8BA0AC6B1DCE39A100E23E63 /* HomeDetailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA0AC6A1DCE39A100E23E63 /* HomeDetailController.swift */; };
 		8BA746B01DBE604A005CEE5E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA746AF1DBE604A005CEE5E /* AppDelegate.swift */; };
 		8BA746B71DBE604A005CEE5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8BA746B61DBE604A005CEE5E /* Assets.xcassets */; };
 		8BA746BA1DBE604A005CEE5E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8BA746B81DBE604A005CEE5E /* LaunchScreen.storyboard */; };
@@ -83,6 +84,7 @@
 		8B6544111DC1BD2000813C30 /* VideoDetailInfoModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoDetailInfoModel.swift; sourceTree = "<group>"; };
 		8B6544141DC1BD9300813C30 /* DetailVideoLargeImageModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailVideoLargeImageModel.swift; sourceTree = "<group>"; };
 		8B87EABA1DC1D95400E96BB7 /* HomeListCommonCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeListCommonCell.swift; sourceTree = "<group>"; };
+		8BA0AC6A1DCE39A100E23E63 /* HomeDetailController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeDetailController.swift; sourceTree = "<group>"; };
 		8BA746AC1DBE604A005CEE5E /* TodayNews-Swift3.0.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "TodayNews-Swift3.0.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8BA746AF1DBE604A005CEE5E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = ../../AppDelegate.swift; sourceTree = "<group>"; };
 		8BA746B61DBE604A005CEE5E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -285,6 +287,7 @@
 			children = (
 				8B4F7EB71DBEDFD200D9E15A /* HomeController.swift */,
 				8B62C2881DC0597D00B0634E /* HomeListController.swift */,
+				8BA0AC6A1DCE39A100E23E63 /* HomeDetailController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -575,6 +578,7 @@
 			files = (
 				8B65440A1DC1AB3800813C30 /* MiddleImageModel.swift in Sources */,
 				8B61A54B1DBF4ACF00EE9CEE /* HomeTopModel.swift in Sources */,
+				8BA0AC6B1DCE39A100E23E63 /* HomeDetailController.swift in Sources */,
 				8B4F7EB81DBEDFD200D9E15A /* HomeController.swift in Sources */,
 				8B4F7EC71DBEF5D900D9E15A /* JCSwiftHeader.swift in Sources */,
 				8B196C1C1DC0F73C0016F76F /* HomeOneImageCell.swift in Sources */,

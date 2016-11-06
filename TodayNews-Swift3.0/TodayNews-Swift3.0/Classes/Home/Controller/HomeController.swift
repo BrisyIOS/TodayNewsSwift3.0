@@ -37,18 +37,13 @@ class HomeController: UIViewController, UIScrollViewDelegate {
                 return;
             }
             
-            UIView.animate(withDuration: 1, animations: { 
-                
-                weakSelf.scrollView.contentOffset = CGPoint(x: kScreenWidth * CGFloat(model.index), y: 0);
-                
-                }, completion: { (finished) in
-                    
-                    let currentVc = weakSelf.childViewControllers[model.index] as? HomeListController;
-                    currentVc?.homeTopModel = model;
-            });
-        
+            let currentVc = weakSelf.childViewControllers[model.index] as! HomeListController;
+            weakSelf.setHomeListVcFrame(index: model.index);
+            weakSelf.scrollView.setContentOffset(CGPoint(x: kScreenWidth * CGFloat(model.index), y: 0), animated: false);
+            currentVc.homeTopModel = model;
         }
-        navigationController?.navigationBar.addSubview(homeTopView);
+        
+        navigationItem.titleView = homeTopView;
         
         // 添加scrollView
         view.addSubview(scrollView);
@@ -71,21 +66,30 @@ class HomeController: UIViewController, UIScrollViewDelegate {
     
     // MARK: - scrollview 滚动结束的时候调用此方法
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-
-        let index = Int(scrollView.contentOffset.x / kScreenWidth);
-        let currentVc = childViewControllers[index];
-        let currentVcX = scrollView.contentOffset.x;
-        let currentVcY = realValue(0);
-        let currentVcW = kScreenWidth;
-        let currentVcH = view.bounds.height;
-        currentVc.view.frame = CGRect(x: currentVcX, y: currentVcY, width: currentVcW, height: currentVcH);
-        scrollView.addSubview(currentVc.view);
         
+        let index = Int(scrollView.contentOffset.x / kScreenWidth);
+        
+        setHomeListVcFrame(index: index);
         
         // 计算新的索引
         let newIndex = index;
         if newIndex != oldIndex {
             homeTopView.changeTitlePosition(index: newIndex);
+        }
+    }
+    
+    // MARK: - 设置homeListVc视图的frame
+    func setHomeListVcFrame(index: Int?) -> Void {
+        
+        let currentVc = childViewControllers[index ?? 0];
+        if currentVc.view.frame == CGRect(x: 0, y: 0, width: realValue(414), height: realValue(736)) {
+            
+            let currentVcX = kScreenWidth * CGFloat(index ?? 0);
+            let currentVcY = realValue(0);
+            let currentVcW = kScreenWidth;
+            let currentVcH = self.view.bounds.height;
+            currentVc.view.frame = CGRect(x: currentVcX, y: currentVcY, width: currentVcW, height: currentVcH);
+            scrollView.addSubview(currentVc.view);
         }
     }
  
@@ -105,19 +109,14 @@ class HomeController: UIViewController, UIScrollViewDelegate {
             let resultDic = result as?[String: Any];
             let dataDic = resultDic?["data"] as?[String: Any];
             let dataArray = dataDic?["data"] as? [[String: Any]];
-   
-            // 添加推荐
-            let homeTopModel = HomeTopModel();
-            homeTopModel.name = "推荐";
-            homeTopModel.isSelected = true;
-           weakSelf.homeTopView.homeTopModelArray.append(homeTopModel);
-            
             let newDataArray = dataArray ?? [];
             for (index, tempDic) in newDataArray.enumerated() {
                 
                 let model = HomeTopModel.modelWidthDic(dic: tempDic);
+                model.isSelected = (index == 0) ? true : false;
                 model.index = index;
                 weakSelf.homeTopView.homeTopModelArray.append(model);
+                
             }
             
             for model in weakSelf.homeTopView.homeTopModelArray {
